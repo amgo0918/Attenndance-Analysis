@@ -1,0 +1,149 @@
+
+import numpy as np
+import pandas as pd
+frame1=pd.read_csv('AttendancePercentageWiseReport.csv') #import csv 
+#frame1
+# ------------------------------------------------ MAKE UP LIST THEORY -------------------------------------------
+frame2=frame1.iloc[:,0:27] #used for slicing column and uses all rows
+#frame2
+att=frame2.iloc[5:653,4:27] #slicing attendance    5 to 652 rows and 4 to 26 columns
+#att
+att.replace('\xa0---',-1,inplace=True) #replace '\xa0---' with -1 
+att2=att.astype('float64',) #change the datatypes of columns as float for further conditions
+#att2
+# inplace=True will change in original dataframe
+make_up_list_theory=att2[((att2.iloc[0:653,0:26]<75) & (att2.iloc[0:653,0:26]>=0) )] #slicing the list of students who have attendance less than 75%
+# list of detainees
+frame=frame2.iloc[0:653,0:4] #slicing serial number,roll_num,uni_id,Student Name
+
+frame3=frame.rename(columns={'Unnamed: 2':" ",'Unnamed: 3':" "}) #rename columns
+result = pd.concat([frame3, make_up_list_theory], axis=1) #concatenate columns 
+make_up_list_theory2=result.rename(columns={'For Time Table':'For Time Table','NVU-Odd Sem':'NVU-Odd Sem','Unnamed: 2':" ",'Unnamed: 3':" ",
+                                            'Unnamed: 4':'AML3201','Unnamed: 5':'CSL2301',
+                       'Unnamed: 6':'CSL3307','Unnamed: 7':'CSL4207','Unnamed: 8':'CSL4208','Unnamed: 9':'CSL4305',
+                       'Unnamed: 10':'CSL4318','Unnamed: 11':'CSL4336','Unnamed: 12':'CSL5210','Unnamed: 13':'CSP2301',
+                       'Unnamed: 14':'ECL3311','Unnamed: 15':'GEW1601','Unnamed: 16':'GEW1603','Unnamed: 17':'GEW1604',
+                       'Unnamed: 18':'GEW1605','Unnamed: 19':'GEW1607','Unnamed: 20':'GEW1608','Unnamed: 21':'GEW1609',
+                       'Unnamed: 22':'GEW1610','Unnamed: 23':'GEW1611','Unnamed: 24':'GEW1613','Unnamed: 25':'HUL2401',
+                                            'Unnamed: 26':'HUL3301'}) #rename columns
+#make_up_list_theory2
+
+result1=make_up_list_theory2.iloc[5:653,4:27].astype('str') #change datatype to string 
+result_1=result1.replace("nan"," ---") #replace 'nan' with '---'
+result3=pd.concat([frame3,result_1],axis=1) #concatenate columns
+
+
+i=result3[(result3.AML3201==' ---') & (result3.CSL2301==' ---') & (result3.CSL3307==' ---')&(result3.CSL4207==' ---')&(result3.CSL4208==' ---')
+                       &(result3.CSL4305==' ---') &(result3.CSL4318==' ---')&(result3.CSL4336==' ---')&
+                       (result3.CSL5210==' ---')&(result3.CSP2301==' ---')&(result3.ECL3311==' ---')&
+                       (result3.GEW1601==' ---')&(result3.GEW1603==' ---')&(result3.GEW1604==' ---')
+                       &(result3.GEW1605==' ---')&(result3.GEW1607==' ---')&(result3.GEW1608==' ---')&
+                       (result3.GEW1609==' ---')&(result3.GEW1610==' ---')&(result3.GEW1611==' ---')&
+                       (result3.GEW1613==' ---')&(result3.HUL2401==' ---')&(result3.HUL3301==' ---')].index 
+                       #drop those students who have attendance more than 75%
+    
+Make_Up_List_1=result3.drop(i) # drops all rows that has "---" 
+
+Make_Up_List_1.iloc[3,4]='Subjects & Attendance in %' 
+Make_Up_List_1.iloc[4,4:31]=['AML3201','CSL2301','CSL3307','CSL4207','CSL4208','CSL4305','CSL4318','CSL4336',
+                  'CSL5210','CSP2301','ECL3311','GEW1601','GEW1603','GEW1604','GEW1605','GEW1607',
+                  'GEW1608','GEW1609','GEW1610','GEW1611','GEW1613','HUL2401','HUL3301'] #add the subject codes
+
+Make_Up_List_1=Make_Up_List_1.rename(columns={'AML3201':"",'CSL2301':"",'CSL3307':"",'CSL4207':"",'CSL4208':"",
+'CSL4305':"",'CSL4318':"",'CSL4336':"",'CSL5210':"",'CSP2301':"",'ECL3311':"",'GEW1601':"",'GEW1603':"",
+'GEW1604':"",'GEW1605':"",'GEW1607':"",'GEW1608':"",'GEW1609':"",'GEW1610':"",'GEW1611':"",'GEW1613':"",
+'HUL2401':"",'HUL3301':"",'AMP1201':"",'CSP1307':"",'CSP2210':"",'ECP1311':""}) #rename columns
+
+#Make_Up_List_1.to_csv("Make_Up_List_1.csv")
+ 
+Make_Up_List_1 #FINAL LIST of students who have attendance less than 75% in Theory
+
+# ------------------------------------------------ MAKE UP LIST PRACTICAL -------------------------------------------
+practical=frame1.iloc[0:653,27:31] #slicing of the practical subjects
+#practical
+p1=practical.replace('\xa0---',-1) #replace null with -1
+#p1.dtypes
+#p1
+p2=p1.iloc[5:653,0:4] #slicing attendance
+#p2
+p3=p2.astype('float64') #convert it into float
+#p3.dtypes
+make_up_list_practical=p1[(p3<75) & (p3>=0)] #slicing the list of students who have attendance less than 75%
+# frame3 contains black cols that were replaced earlier
+result2=pd.concat([frame3,make_up_list_practical],axis=1)# #concatenate columns
+make_up_list_practical2=result2.rename(columns={'For Time Table':'For Time Table','NVU-Odd Sem':'NVU-Odd Sem','Unnamed: 27':'AMP1201','Unnamed: 28':'CSP1307',
+                                                'Unnamed: 29':'CSP2210','Unnamed: 30':'ECP1311'}) #rename columns
+
+m3=make_up_list_practical2.iloc[5:653,4:8].astype("str") #change datatype # the practical col become indexed as 4 to 8
+m4=frame3.rename(columns={"Unnamed: 2":" ","Unnamed: 3":" "})#rename columns
+m5=m3.replace("nan"," ---")
+result4=pd.concat([m4,m5],axis=1) #concatenate columns
+#result4
+i=result4[(result4.AMP1201==' ---')&(result4.CSP1307==' ---')&(result4.CSP2210==' ---')&
+          (result4.ECP1311==' ---')].index #drop those students who have attendance more than 75%
+
+Make_Up_List_2=result4.drop(i) 
+
+Make_Up_List_2.iloc[3,4]='Practical' 
+Make_Up_List_2.iloc[4,4:8]=['AMP1201','CSP1307','CSP2210','ECP1311'] #add the subject codes
+
+
+Make_Up_List_2=Make_Up_List_2.rename(columns={'AMP1201':"",'CSP1307':"",'CSP2210':"",'ECP1311':""}) 
+#rename columns 
+
+
+#Make_Up_List_2.to_csv('Make_Up_List_2.csv')
+
+Make_Up_List_2 #FINAL LIST of students who have attendance less than 75% in Practical
+# ------------------------------------------------ ATTENDANCE OK LIST --------------------------------------------------
+aok=frame1.iloc[5:653,4:31] #slicing attendance percentage
+#m1.info()
+#aok
+aok=aok.replace(-1,200) 
+aok=aok.replace('\xa0---',200)
+aok=aok.astype('float64') #change datatype
+
+aok1=aok[(aok.iloc[0:653,0]>=75)&(aok.iloc[0:653,1]>=75)&(aok.iloc[0:653,2]>=75)&(aok.iloc[0:653,3]>=75)&(aok.iloc[0:653,4]>=75)&(aok.iloc[0:653,5]>=75)
+&(aok.iloc[0:653,6]>=75)&(aok.iloc[0:653,7]>=75)&(aok.iloc[0:653,8]>=75)&(aok.iloc[0:653,9]>=75)&(aok.iloc[0:653,10]>=75)&
+(aok.iloc[0:653,11]>=75)&(aok.iloc[0:653,12]>=75)&(aok.iloc[0:653,13]>=75)&(aok.iloc[0:653,14]>=75)&(aok.iloc[0:653,15]>=75)&
+(aok.iloc[0:653,16]>=75)&(aok.iloc[0:653,17]>=75)&(aok.iloc[0:653,18]>=75)&(aok.iloc[0:653,19]>=75)&(aok.iloc[0:653,20]>=75)&
+(aok.iloc[0:653,21]>=75)&(aok.iloc[0:653,22]>=75)&(aok.iloc[0:653,23]>=75)&(aok.iloc[0:653,24]>=75)&(aok.iloc[0:653,25]>=75)&
+(aok.iloc[0:653,26]>=75)] #slicing the list of students who have attendance more than 75%
+
+aok2=aok1.replace(200," ---")
+result10=pd.concat([frame3,aok2],axis=1) #conactenate columns
+aok3=result10.iloc[5:653,4:31].astype('str') #changing datatypes
+res=pd.concat([frame3,aok3],axis=1)
+
+res.iloc[3,4]='Subjects & Attendance in %'
+res.iloc[3,27]='Practical'
+res.iloc[4,4:31]=['AML3201','CSL2301','CSL3307','CSL4207','CSL4208','CSL4305','CSL4318','CSL4336',
+                  'CSL5210','CSP2301','ECL3311','GEW1601','GEW1603','GEW1604','GEW1605','GEW1607',
+                  'GEW1608','GEW1609','GEW1610','GEW1611','GEW1613','HUL2401','HUL3301','AMP1201',
+                  'CSP1307','CSP2210','ECP1311']
+res=res.rename(columns={'Unnamed: 4':'AML3201','Unnamed: 5':'CSL2301',
+                       'Unnamed: 6':'CSL3307','Unnamed: 7':'CSL4207','Unnamed: 8':'CSL4208','Unnamed: 9':'CSL4305',
+                       'Unnamed: 10':'CSL4318','Unnamed: 11':'CSL4336','Unnamed: 12':'CSL5210','Unnamed: 13':'CSP2301',
+                       'Unnamed: 14':'ECL3311','Unnamed: 15':'GEW1601','Unnamed: 16':'GEW1603','Unnamed: 17':'GEW1604',
+                       'Unnamed: 18':'GEW1605','Unnamed: 19':'GEW1607','Unnamed: 20':'GEW1608','Unnamed: 21':'GEW1609',
+                       'Unnamed: 22':'GEW1610','Unnamed: 23':'GEW1611','Unnamed: 24':'GEW1613','Unnamed: 25':'HUL2401',
+                        'Unnamed: 26':'HUL3301','Unnamed: 27':'AMP1201','Unnamed: 28':'CSP1307',
+                        'Unnamed: 29':'CSP2210','Unnamed: 30':'ECP1311'}) #renaming columnss
+#res
+
+i3=res[(res.AML3201=='nan') & (res.CSL2301=='nan') & (res.CSL3307=='nan')&(res.CSL4207=='nan')&(res.CSL4208=='nan')
+          &(res.CSL4305=='nan') &(res.CSL4318=='nan')&(res.CSL4336=='nan')&(res.CSL5210=='nan')&(res.CSP2301=='nan')&(res.ECL3311=='nan')&
+           (res.GEW1601=='nan')&(res.GEW1603=='nan')&(res.GEW1604=='nan')&(res.GEW1605=='nan')&(res.GEW1607=='nan')&(res.GEW1608=='nan')&
+           (res.GEW1609=='nan')&(res.GEW1610=='nan')&(res.GEW1611=='nan')&(res.GEW1613=='nan')&
+          (res.HUL2401=='nan')&(res.HUL3301=='nan')&(res.AMP1201=='nan')&(res.CSP1307=='nan')&(res.CSP2210=='nan')&
+          (res.ECP1311=='nan')].index #drop the columns who have attendance 
+
+Attendance_Ok=res.drop(i3)
+
+Attendance_Ok=Attendance_Ok.rename(columns={'AML3201':"",'CSL2301':"",'CSL3307':"",'CSL4207':"",'CSL4208':"",
+'CSL4305':"",'CSL4318':"",'CSL4336':"",'CSL5210':"",'CSP2301':"",'ECL3311':"",'GEW1601':"",'GEW1603':"",
+'GEW1604':"",'GEW1605':"",'GEW1607':"",'GEW1608':"",'GEW1609':"",'GEW1610':"",'GEW1611':"",'GEW1613':"",
+'HUL2401':"",'HUL3301':"",'AMP1201':"",'CSP1307':"",'CSP2210':"",'ECP1311':""}) #renaming columns
+
+#Attendance_Ok.to_csv("Attendance_Ok.csv")
+Attendance_Ok #FINAL LIST of students who have attendance more than or equal to 75% 
